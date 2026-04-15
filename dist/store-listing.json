@@ -1,20 +1,46 @@
 {
   "name": "LocalLens: Private AI Summaries",
-  "short_description": "Private page summaries, rewrites, translations, and safe-share cleanup powered by Chrome built-in AI.",
-  "detailed_description": "LocalLens helps you move through dense pages faster without routing tab text to an external server.\n\nWhat it does:\n- Summarizes the current page into useful key points\n- Summarizes selected text for fast scanning\n- Simplifies dense writing into plainer language\n- Translates selected text inside the popup\n- Creates safe-share briefs by masking obvious sensitive strings before local AI processing\n\nWhy people use it:\n- No account or API key\n- Active-tab only workflow\n- Minimal permissions\n- Built for privacy-sensitive reading and collaboration workflows\n\nTechnical note:\nLocalLens targets Chrome 138+ with built-in AI support. If your browser has not downloaded the local model yet, Chrome may need a short warm-up download on first use.",
-  "category": "Productivity",
-  "single_purpose": "Summarize, simplify, translate, and safely rewrite text from the active tab with Chrome built-in AI while keeping the workflow local-first.",
+  "short_description": "Local summaries, simplification, translation, and safe-share cleanup for the active tab using Chrome built-in AI.",
+  "detailed_description": "LocalLens helps you move through dense pages faster without routing tab text to an external server.\n\nWhat it does:\n- Summarizes the current page into useful key points\n- Summarizes selected text for fast scanning\n- Simplifies dense writing into plainer language\n- Translates selected text inside the popup\n- Creates safe-share briefs by masking obvious sensitive strings before local AI processing\n\nWhy people use it:\n- No account or API key\n- Active-tab only workflow\n- Minimal permissions\n- No background scraping or host permissions\n- Built for privacy-sensitive reading and collaboration workflows\n\nTechnical note:\nLocalLens targets Chrome 138+ with built-in AI support. If your browser has not downloaded the local model yet, Chrome may need a short warm-up download on first use.",
+  "category": "Tools",
+  "language": "English",
+  "single_purpose": "Turn page or selected text from the active tab into local summaries, simplified rewrites, translations, or safe-share briefs with Chrome built-in AI.",
   "privacy": {
     "stores_data": "No",
     "sells_data": "No",
     "shares_data": "No",
     "uses_external_servers": "No",
-    "justification": "LocalLens reads text from the active tab only after the user clicks an action. The extension uses Chrome built-in AI locally and does not send captured text to a remote API."
+    "justification": "LocalLens reads website content from the active tab only after an explicit click. The extension processes that content locally with Chrome built-in AI and does not transmit page text, selections, or generated output to the developer.",
+    "permission_justifications": {
+      "activeTab": "LocalLens requests temporary access to the current tab only after the user clicks an action, so it can read the page title, page URL, and visible text that the user wants summarized, translated, simplified, or rewritten.",
+      "scripting": "LocalLens injects a short on-page function into the active tab at request time so it can extract either the readable page text or the user's current selection without persistent host access."
+    },
+    "remote_code": false,
+    "data_categories": [
+      "Website content"
+    ],
+    "privacy_policy_url": "https://github.com/zack-dev-cm/openclaw-cws-publisher/blob/main/docs/privacy-policy.md",
+    "certifications": [
+      "I do not sell or transfer user data to third parties, outside of the approved use cases",
+      "I do not use or transfer user data for purposes that are unrelated to my item's single purpose",
+      "I do not use or transfer user data to determine creditworthiness or for lending purposes"
+    ]
   },
+  "support_url": "https://github.com/zack-dev-cm/openclaw-cws-publisher/issues",
+  "reviewer_instructions": [
+    "Use Chrome 138+ on desktop with built-in AI enabled.",
+    "Open a text-heavy page, click the LocalLens action, and run Summarize page.",
+    "Highlight text on a page, then run Summarize selection, Simplify selection, Translate selection, and Safe-share selection.",
+    "If Chrome downloads a local model on first use, wait for the progress indicator in the popup to finish and rerun the action."
+  ],
   "store_assets": {
     "icon": "/Users/zack/Documents/GitHub/openclaw-cws-publisher/extension/icons/icon128.png",
-    "screenshot_1": "/Users/zack/Documents/GitHub/openclaw-cws-publisher/dist/store-assets/locallens-store-screenshot-1.png",
-    "promo_small": "/Users/zack/Documents/GitHub/openclaw-cws-publisher/dist/store-assets/locallens-promo-small.png"
+    "screenshots": [
+      "/Users/zack/Documents/GitHub/openclaw-cws-publisher/dist/store-assets/locallens-store-screenshot-1.png",
+      "/Users/zack/Documents/GitHub/openclaw-cws-publisher/dist/store-assets/locallens-store-screenshot-2.png"
+    ],
+    "promo_small": "/Users/zack/Documents/GitHub/openclaw-cws-publisher/dist/store-assets/locallens-promo-small.png",
+    "promo_marquee": "/Users/zack/Documents/GitHub/openclaw-cws-publisher/dist/store-assets/locallens-promo-marquee.png"
   },
   "keywords": [
     "ai summary",

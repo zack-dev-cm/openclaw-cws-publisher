@@ -67,6 +67,11 @@ python3 skill/openclaw-cws-publisher/scripts/run_agent.py \
 
 The decision memo and official source links live in [docs/research.md](docs/research.md).
 
+## Compliance Artifacts
+
+- Privacy policy: [docs/privacy-policy.md](docs/privacy-policy.md)
+- Reviewer test instructions: [docs/test-instructions.md](docs/test-instructions.md)
+
 ## License
 
 MIT

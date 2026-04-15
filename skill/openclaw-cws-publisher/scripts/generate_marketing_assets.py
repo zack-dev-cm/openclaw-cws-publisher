@@ -66,6 +66,9 @@ def render_page(
         if out_path.exists() and out_path.stat().st_size > 0:
             return
         if process.poll() is not None:
+            time.sleep(0.25)
+            if out_path.exists() and out_path.stat().st_size > 0:
+                return
             raise SystemExit(f"Chrome exited before writing {out_path}")
         time.sleep(0.25)
     raise SystemExit(f"Timed out waiting for {out_path}")
@@ -91,20 +94,26 @@ def main() -> None:
 
     temp_icon = dist_assets / "icon128.png"
     screenshot = dist_assets / "locallens-store-screenshot-1.png"
+    screenshot_alt = dist_assets / "locallens-store-screenshot-2.png"
     promo = dist_assets / "locallens-promo-small.png"
+    marquee = dist_assets / "locallens-promo-marquee.png"
 
     profile_dir = Path(tempfile.mkdtemp(prefix="locallens-chrome-"))
-    render_page(chrome, marketing / "icon.html", temp_icon, 128, 128, profile_dir)
-    render_page(chrome, marketing / "screenshot.html", screenshot, 1280, 800, profile_dir)
-    render_page(chrome, marketing / "promo.html", promo, 440, 280, profile_dir)
+    try:
+        render_page(chrome, marketing / "icon.html", temp_icon, 128, 128, profile_dir)
+        render_page(chrome, marketing / "screenshot.html", screenshot, 1280, 800, profile_dir)
+        render_page(chrome, marketing / "screenshot-focus.html", screenshot_alt, 1280, 800, profile_dir)
+        render_page(chrome, marketing / "promo.html", promo, 440, 280, profile_dir)
+        render_page(chrome, marketing / "marquee.html", marquee, 1400, 560, profile_dir)
 
-    icons_dir.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(temp_icon, icons_dir / "icon128.png")
-    resize(temp_icon, icons_dir / "icon48.png", 48)
-    resize(temp_icon, icons_dir / "icon32.png", 32)
-    resize(temp_icon, icons_dir / "icon16.png", 16)
-
-    run(["pkill", "-f", str(profile_dir)], timeout=10)
+        icons_dir.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(temp_icon, icons_dir / "icon128.png")
+        resize(temp_icon, icons_dir / "icon48.png", 48)
+        resize(temp_icon, icons_dir / "icon32.png", 32)
+        resize(temp_icon, icons_dir / "icon16.png", 16)
+    finally:
+        run(["pkill", "-f", str(profile_dir)], timeout=10)
+        shutil.rmtree(profile_dir, ignore_errors=True)
 
     print(f"Generated store assets in {dist_assets}")
     print(f"Generated extension icons in {icons_dir}")
