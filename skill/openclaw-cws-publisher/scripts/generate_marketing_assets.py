@@ -74,6 +74,32 @@ def render_page(
     raise SystemExit(f"Timed out waiting for {out_path}")
 
 
+def convert_image(source: Path, destination: Path, image_format: str) -> None:
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    result = run(["sips", "-s", "format", image_format, str(source), "--out", str(destination)], timeout=60)
+    if result.returncode != 0:
+        raise SystemExit(f"sips convert failed:\n{result.stderr or result.stdout}")
+
+
+def render_jpeg(
+    chrome: Path,
+    html_path: Path,
+    out_path: Path,
+    width: int,
+    height: int,
+    profile_dir: Path,
+) -> None:
+    source_paths = [html_path, html_path.parent / "marketing.css"]
+    if asset_is_fresh(out_path, source_paths):
+        return
+    temp_png = out_path.with_suffix(".render.png")
+    try:
+        render_page(chrome, html_path, temp_png, width, height, profile_dir)
+        convert_image(temp_png, out_path, "jpeg")
+    finally:
+        temp_png.unlink(missing_ok=True)
+
+
 def resize(source: Path, destination: Path, size: int) -> None:
     destination.parent.mkdir(parents=True, exist_ok=True)
     result = run(["sips", "-z", str(size), str(size), str(source), "--out", str(destination)], timeout=60)
@@ -82,7 +108,7 @@ def resize(source: Path, destination: Path, size: int) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Render icon and store asset PNGs from local HTML mockups.")
+    parser = argparse.ArgumentParser(description="Render icon and store assets from local HTML mockups.")
     parser.add_argument("--repo-root", default=".", help="Project root.")
     args = parser.parse_args()
 
@@ -94,17 +120,17 @@ def main() -> None:
 
     temp_icon = dist_assets / "icon128.png"
     screenshot = dist_assets / "locallens-store-screenshot-1.png"
-    screenshot_alt = dist_assets / "locallens-store-screenshot-2.png"
+    screenshot_alt = dist_assets / "locallens-store-screenshot-2.jpg"
     promo = dist_assets / "locallens-promo-small.png"
-    marquee = dist_assets / "locallens-promo-marquee.png"
+    marquee = dist_assets / "locallens-promo-marquee.jpg"
 
     profile_dir = Path(tempfile.mkdtemp(prefix="locallens-chrome-"))
     try:
         render_page(chrome, marketing / "icon.html", temp_icon, 128, 128, profile_dir)
         render_page(chrome, marketing / "screenshot.html", screenshot, 1280, 800, profile_dir)
-        render_page(chrome, marketing / "screenshot-focus.html", screenshot_alt, 1280, 800, profile_dir)
+        render_jpeg(chrome, marketing / "screenshot-focus.html", screenshot_alt, 1280, 800, profile_dir)
         render_page(chrome, marketing / "promo.html", promo, 440, 280, profile_dir)
-        render_page(chrome, marketing / "marquee.html", marquee, 1400, 560, profile_dir)
+        render_jpeg(chrome, marketing / "marquee.html", marquee, 1400, 560, profile_dir)
 
         icons_dir.mkdir(parents=True, exist_ok=True)
         shutil.copy2(temp_icon, icons_dir / "icon128.png")

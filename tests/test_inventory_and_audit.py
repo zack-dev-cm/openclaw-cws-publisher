@@ -237,7 +237,8 @@ def test_build_listing_payload_matches_manifest_permissions_and_assets(tmp_path:
     assert payload["privacy"]["data_categories"] == ["Website content"]
     assert payload["privacy"]["privacy_policy_url"] == launch_manifest["privacy_policy_url"]
     assert len(payload["store_assets"]["screenshots"]) == 2
-    assert payload["store_assets"]["promo_marquee"].endswith("locallens-promo-marquee.png")
+    assert payload["store_assets"]["screenshots"][1].endswith("locallens-store-screenshot-2.jpg")
+    assert payload["store_assets"]["promo_marquee"].endswith("locallens-promo-marquee.jpg")
 
 
 def test_publish_extension_rejects_storefront_redirect_snapshot() -> None:

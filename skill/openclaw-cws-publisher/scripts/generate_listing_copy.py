@@ -86,10 +86,10 @@ def build_listing_payload(repo_root: Path, launch_manifest: dict) -> dict:
             "icon": str(repo_root / "extension" / "icons" / "icon128.png"),
             "screenshots": [
                 str(repo_root / "dist" / "store-assets" / "locallens-store-screenshot-1.png"),
-                str(repo_root / "dist" / "store-assets" / "locallens-store-screenshot-2.png"),
+                str(repo_root / "dist" / "store-assets" / "locallens-store-screenshot-2.jpg"),
             ],
             "promo_small": str(repo_root / "dist" / "store-assets" / "locallens-promo-small.png"),
-            "promo_marquee": str(repo_root / "dist" / "store-assets" / "locallens-promo-marquee.png"),
+            "promo_marquee": str(repo_root / "dist" / "store-assets" / "locallens-promo-marquee.jpg"),
         },
         "keywords": [
             "ai summary",
