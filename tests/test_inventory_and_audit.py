@@ -11,6 +11,7 @@ sys.path.insert(0, str(SCRIPT_DIR))
 
 from generate_marketing_assets import asset_is_fresh
 from inventory_local_extensions import collect_inventory
+from publish_extension import dashboard_access_error, find_new_item_ref
 from scan_publish_surface import scan
 
 
@@ -167,3 +168,32 @@ def test_asset_is_fresh_tracks_source_updates(tmp_path: Path) -> None:
     time.sleep(0.01)
     css.write_text("body{color:red;}", encoding="utf-8")
     assert asset_is_fresh(output, [source, css]) is False
+
+
+def test_publish_extension_rejects_storefront_redirect_snapshot() -> None:
+    snapshot = """
+- generic [ref=e1]:
+  - banner [ref=e2]:
+    - tab [selected] [ref=e56] [cursor=pointer]:
+      - generic: Discover
+  - main [ref=e62]:
+    - heading [level=1] [ref=e63]: Welcome to Chrome Web Store
+    - heading [level=2] [ref=e234]: Top categories
+    - generic [ref=e181] [cursor=pointer]:
+      - generic [ref=e182]: See collection
+""".strip()
+
+    assert find_new_item_ref(snapshot) is None
+    assert dashboard_access_error(snapshot) == "storefront_redirect"
+
+
+def test_publish_extension_accepts_dashboard_snapshot_with_new_item() -> None:
+    snapshot = """
+- generic [ref=e1]:
+  - heading [level=1] [ref=e2]: Developer Dashboard
+  - button [ref=e15] [cursor=pointer]:
+    - generic [ref=e16]: Add new item
+""".strip()
+
+    assert find_new_item_ref(snapshot) == "e15"
+    assert dashboard_access_error(snapshot) is None

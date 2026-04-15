@@ -18,7 +18,29 @@ from openclaw_bridge import (
 )
 
 
-DASHBOARD_URL = "https://chromewebstore.google.com/u/0/developer/dashboard"
+DASHBOARD_URL = "https://chrome.google.com/webstore/devconsole"
+PUBLIC_STORE_MARKERS = (
+    "welcome to chrome web store",
+    "top categories",
+    "see collection",
+    "favorites of 2025",
+)
+SIGN_IN_MARKERS = ("sign in", "signin", "google account")
+
+
+def find_new_item_ref(snapshot_text: str) -> str | None:
+    return find_ref(snapshot_text, ["add", "new", "item"]) or find_ref(snapshot_text, ["new", "item"])
+
+
+def dashboard_access_error(snapshot_text: str) -> str | None:
+    lowered = snapshot_text.lower()
+    if any(marker in lowered for marker in SIGN_IN_MARKERS):
+        return "signed_out"
+    if find_new_item_ref(snapshot_text):
+        return None
+    if any(marker in lowered for marker in PUBLIC_STORE_MARKERS):
+        return "storefront_redirect"
+    return None
 
 
 def fill_text_field(profile: str, snap: str, label_phrases: list[str], value: str) -> bool:
@@ -56,18 +78,25 @@ def main() -> None:
         first_snapshot = snapshot(profile)
         dump_snapshot_text(first_snapshot, snapshot_dir / "dashboard-initial.txt")
 
-        lowered = first_snapshot.lower()
-        if "sign in" in lowered or "signin" in lowered or "google account" in lowered:
+        dashboard_error = dashboard_access_error(first_snapshot)
+        if dashboard_error == "signed_out":
             raise SystemExit(
                 "Chrome Web Store dashboard is not signed in for this OpenClaw profile. "
                 f"Review {snapshot_dir / 'dashboard-initial.txt'} and log in, then rerun publish_extension.py."
+            )
+        if dashboard_error == "storefront_redirect":
+            raise SystemExit(
+                "Chrome Web Store developer dashboard did not open for this OpenClaw profile. "
+                "Google redirected the session to the public store homepage instead. "
+                f"Review {snapshot_dir / 'dashboard-initial.txt'}, confirm the profile is signed into the correct "
+                "developer account, then rerun publish_extension.py."
             )
 
         if args.dry_run:
             print(f"Saved dashboard snapshot to {snapshot_dir / 'dashboard-initial.txt'}")
             return
 
-        add_ref = find_ref(first_snapshot, ["add", "new", "item"]) or find_ref(first_snapshot, ["new", "item"])
+        add_ref = find_new_item_ref(first_snapshot)
         if not add_ref:
             raise SystemExit(
                 "Could not find the New Item control in the dashboard snapshot. "
