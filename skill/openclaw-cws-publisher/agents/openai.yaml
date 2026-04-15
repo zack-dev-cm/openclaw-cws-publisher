@@ -1,4 +1,4 @@
 interface:
   display_name: "OpenClaw CWS Publisher"
-  short_description: "Package and publish Chrome extensions with OpenClaw, GitHub, ClawHub, and leak checks"
-  default_prompt: "Use $openclaw-cws-publisher to inventory local Chrome extensions, build the new extension ZIP and store assets, scan for publish leaks, generate launch metadata, and drive Chrome Web Store submission through OpenClaw browser automation."
+  short_description: "Package Chrome extensions, scan tracked files, and render GitHub or ClawHub release commands with explicit tags"
+  default_prompt: "Use $openclaw-cws-publisher to package the target extension directory, scan tracked files for public-surface leaks, generate launch metadata for the target repo, and render GitHub or ClawHub publish commands with explicit topics and tags."

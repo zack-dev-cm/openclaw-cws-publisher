@@ -12,18 +12,23 @@ def main() -> None:
     args = parser.parse_args()
 
     manifest = load_json(args.manifest)
+    repo_owner = manifest.get("repo_owner", "example-org")
     repo_name = manifest["repo_name"]
     github_description = manifest.get("github_description", "")
     github_homepage = manifest.get("github_homepage", "")
     github_topics = manifest.get("github_topics", [])
-    clawhub = manifest["clawhub"]
     release = manifest["release"]
-    tags = clawhub.get("tags", [])
+    topic_lines = "\n".join(
+        f'gh repo edit {repo_owner}/{repo_name} --add-topic "{topic}"'
+        for topic in github_topics
+    ) or "# add topics if you need them"
+    homepage_line = (
+        f'gh repo edit {repo_owner}/{repo_name} --homepage "{github_homepage}"'
+        if github_homepage
+        else "# set a homepage if the project has one"
+    )
 
-    topic_flags = " ".join(f"--add-topic {topic}" for topic in github_topics)
-    tag_flags = f' \\\n  --tags "{",".join(tags)}"' if tags else ""
-
-    text = f"""# Publish Commands
+    sections = [f"""# Publish Commands
 
 ## GitHub
 
@@ -31,25 +36,31 @@ def main() -> None:
 git init
 git add .
 git commit -m "{release['title']}"
-gh repo create zack-dev-cm/{repo_name} --public --source=. --remote=origin --push
-gh repo edit zack-dev-cm/{repo_name} \\
-  --description "{github_description}" \\
-  --homepage "{github_homepage}"
-gh repo edit zack-dev-cm/{repo_name} {topic_flags}
+gh repo create {repo_owner}/{repo_name} --public --source=. --remote=origin --push
+gh repo edit {repo_owner}/{repo_name} --description "{github_description}"
+{homepage_line}
+{topic_lines}
 gh release create {release['tag']} --title "{release['title']}" --notes-file dist/github-release-notes.md
 ```
+"""]
 
-## ClawHub
+    clawhub = manifest.get("clawhub")
+    if clawhub:
+        tags = clawhub.get("tags", [])
+        tag_flags = f' \\\n  --tags "{",".join(tags)}"' if tags else ""
+        sections.append(
+            f"""## ClawHub
 
 ```bash
-(cd skill/openclaw-cws-publisher && clawhub publish "$PWD" \\
+(cd skill/openclaw-cws-publisher && npx --yes clawhub publish "$PWD" \\
   --slug {clawhub['slug']} \\
   --name "{clawhub['name']}" \\
   --version {clawhub['version']} \\
-  --changelog "Initial public release."{tag_flags})
+  --changelog "{release['title']}"{tag_flags})
 ```
 """
-    dump_text(args.out, text)
+        )
+    dump_text(args.out, "\n".join(sections))
     print(f"Wrote {args.out}")
 
 

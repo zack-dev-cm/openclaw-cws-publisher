@@ -2,4 +2,7 @@
 .pytest_cache/
 __pycache__/
 *.pyc
-dist/openclaw/
+dist/
+docs/local_extension_inventory.md
+docs/publish_surface.md
+docs/publish-surface-scan.md

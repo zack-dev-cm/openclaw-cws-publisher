@@ -1,34 +1,36 @@
 # OpenClaw CWS Publisher
 
-Open-source OpenClaw agent for shipping Chrome extensions with less manual drift.
+Repo-local release helpers for Chrome extension projects.
 
-This repo contains two deliverables:
+This repo now ships one public deliverable:
 
-- `extension/`: `LocalLens: Private AI Summaries`, a Chrome extension that summarizes, simplifies, translates, and safe-shares page text locally with Chrome built-in AI.
-- `skill/openclaw-cws-publisher/`: a ClawHub-ready OpenClaw skill that inventories local extension repos, builds a ZIP, generates store copy, scans for leak risks, and drives Chrome Web Store publication through `openclaw browser`.
+- `skill/openclaw-cws-publisher/`: a ClawHub-ready release kit for packaging an extension, scanning tracked files for public-surface leaks, generating GitHub metadata, and rendering publish commands with explicit GitHub topics and ClawHub tags.
 
-## Why This Product
+The LocalLens extension was split out of this repo. Product assets, Chrome Web Store copy, and extension-specific docs no longer belong in the public publisher package.
 
-The extension idea is intentionally narrow and policy-friendly:
+## What This Repo Does
 
-- current Chrome AI momentum is real, but generic all-in-one AI sidebars are crowded
-- Chrome now exposes built-in AI APIs for summarization and prompting on stable channels
-- Chrome Web Store review strongly prefers a single purpose, minimal permissions, and clear privacy disclosures
-- this machine already has multiple AI chat and devtools extensions, so the new item avoids that overlap
+- zip a target `extension/` directory for Chrome Web Store upload
+- scan tracked files for absolute paths, localhost URLs, websocket URLs, and token-shaped strings
+- derive GitHub and optional ClawHub release metadata from a target extension manifest
+- render reproducible `gh repo edit`, `gh release create`, and `clawhub publish --tags ...` commands
 
-The result is a privacy-first utility with a broader audience than a developer-only tool and a cleaner review surface than a server-backed copilot.
+## What This Repo Does Not Do
+
+- it does not inventory arbitrary filesystem trees by default
+- it does not ship a bundled Chrome extension product
+- it does not drive a logged-in browser profile as part of the public ClawHub skill
 
 ## Repo Layout
 
 ```text
-docs/                              research and generated inventory
-extension/                         LocalLens MV3 extension
-marketing/                         HTML sources for store assets
-skill/openclaw-cws-publisher/      publish agent skill
-tests/                             smoke tests for inventory/build/audit logic
+skill/openclaw-cws-publisher/      public release-kit skill
+tests/                             smoke tests for zip, audit, and manifest helpers
 ```
 
 ## Quick Start
+
+Run these helpers from the extension repo you want to release.
 
 ```bash
 cd openclaw-cws-publisher
@@ -36,41 +38,45 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -e '.[dev]'
 
-python3 skill/openclaw-cws-publisher/scripts/generate_marketing_assets.py \
-  --repo-root .
-
 python3 skill/openclaw-cws-publisher/scripts/build_extension_zip.py \
-  --extension-dir extension \
-  --out dist/locallens-extension.zip
+  --extension-dir /path/to/extension-repo/extension \
+  --out /path/to/extension-repo/dist/extension.zip
 
-python3 skill/openclaw-cws-publisher/scripts/inventory_local_extensions.py \
-  --search-root ~/Documents/GitHub \
-  --markdown-out docs/local_extension_inventory.md \
-  --json-out dist/local_extension_inventory.json
+python3 skill/openclaw-cws-publisher/scripts/scan_publish_surface.py \
+  --root /path/to/extension-repo \
+  --json-out /path/to/extension-repo/dist/publish-surface.json \
+  --markdown-out /path/to/extension-repo/docs/publish-surface.md
 
-python3 skill/openclaw-cws-publisher/scripts/run_agent.py \
-  --repo-root . \
-  --search-root ~/Documents/GitHub \
-  --browser-profile openclaw-cws-publisher
+python3 skill/openclaw-cws-publisher/scripts/generate_launch_manifest.py \
+  --repo-root /path/to/extension-repo \
+  --owner your-github-owner \
+  --clawhub-slug your-extension-slug \
+  --clawhub-name "Your Extension Skill" \
+  --out /path/to/extension-repo/dist/launch-manifest.json
+
+python3 skill/openclaw-cws-publisher/scripts/render_publish_commands.py \
+  --manifest /path/to/extension-repo/dist/launch-manifest.json \
+  --out /path/to/extension-repo/dist/publish-commands.md
 ```
 
-## Publish Flow
+## Release Contract
 
-1. Inventory local extension repos so you do not clone an already-shipped idea.
-2. Generate the Chrome extension ZIP and store assets.
-3. Scan the repo for obvious publish leaks.
-4. Generate store listing copy and release metadata.
-5. Launch Chrome Web Store dashboard automation through OpenClaw.
-6. Publish the skill to ClawHub and add the portfolio entry.
+The target repo should provide:
 
-## Research
+- `extension/manifest.json`
+- `docs/privacy-policy.md`
+- `docs/test-instructions.md`
 
-The decision memo and official source links live in [docs/research.md](docs/research.md).
+Optional:
 
-## Compliance Artifacts
+- a ClawHub skill slug and name if the target repo also publishes a public skill
+- extra GitHub topics and ClawHub tags through the manifest generator flags
 
-- Privacy policy: [docs/privacy-policy.md](docs/privacy-policy.md)
-- Reviewer test instructions: [docs/test-instructions.md](docs/test-instructions.md)
+## Security Posture
+
+- the leak scan now operates on tracked files from `git ls-files`
+- generated artifacts are not meant to be committed by default
+- browser automation is intentionally kept out of the public skill surface
 
 ## License
 
