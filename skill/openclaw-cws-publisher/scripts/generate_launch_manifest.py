@@ -17,11 +17,14 @@ def build_launch_manifest(repo_root: Path) -> dict:
     return {
         "repo_name": repo_name,
         "repo_url": repo_url,
+        "github_description": "Chrome extension plus OpenClaw skill for packaging, leak-checking, and publishing LocalLens on the Chrome Web Store.",
+        "github_homepage": "https://clawhub.ai/zack-dev-cm/openclaw-cws-publisher",
         "support_url": f"{repo_url}/issues",
         "privacy_policy_url": f"{repo_url}/blob/main/docs/privacy-policy.md",
         "test_instructions_url": f"{repo_url}/blob/main/docs/test-instructions.md",
         "github_topics": [
             "chrome-extension",
+            "chrome-web-store",
             "openclaw",
             "browser-automation",
             "built-in-ai",
@@ -32,6 +35,13 @@ def build_launch_manifest(repo_root: Path) -> dict:
             "name": "OpenClaw CWS Publisher",
             "version": manifest["version"],
             "description": "OpenClaw skill for packaging and publishing Chrome extensions with leak checks and browser automation.",
+            "tags": [
+                "chrome-extension",
+                "chrome-web-store",
+                "openclaw",
+                "browser-automation",
+                "privacy",
+            ],
         },
         "extension": {
             "name": extension_name,

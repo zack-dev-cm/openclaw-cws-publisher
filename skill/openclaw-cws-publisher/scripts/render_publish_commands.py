@@ -13,8 +13,15 @@ def main() -> None:
 
     manifest = load_json(args.manifest)
     repo_name = manifest["repo_name"]
+    github_description = manifest.get("github_description", "")
+    github_homepage = manifest.get("github_homepage", "")
+    github_topics = manifest.get("github_topics", [])
     clawhub = manifest["clawhub"]
     release = manifest["release"]
+    tags = clawhub.get("tags", [])
+
+    topic_flags = " ".join(f"--add-topic {topic}" for topic in github_topics)
+    tag_flags = f' \\\n  --tags "{",".join(tags)}"' if tags else ""
 
     text = f"""# Publish Commands
 
@@ -25,6 +32,10 @@ git init
 git add .
 git commit -m "{release['title']}"
 gh repo create zack-dev-cm/{repo_name} --public --source=. --remote=origin --push
+gh repo edit zack-dev-cm/{repo_name} \\
+  --description "{github_description}" \\
+  --homepage "{github_homepage}"
+gh repo edit zack-dev-cm/{repo_name} {topic_flags}
 gh release create {release['tag']} --title "{release['title']}" --notes-file dist/github-release-notes.md
 ```
 
@@ -35,7 +46,7 @@ gh release create {release['tag']} --title "{release['title']}" --notes-file dis
   --slug {clawhub['slug']} \\
   --name "{clawhub['name']}" \\
   --version {clawhub['version']} \\
-  --changelog "Initial public release.")
+  --changelog "Initial public release."{tag_flags})
 ```
 """
     dump_text(args.out, text)

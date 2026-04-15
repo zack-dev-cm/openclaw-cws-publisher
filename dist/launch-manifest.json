@@ -1,11 +1,14 @@
 {
   "repo_name": "openclaw-cws-publisher",
   "repo_url": "https://github.com/zack-dev-cm/openclaw-cws-publisher",
+  "github_description": "Chrome extension plus OpenClaw skill for packaging, leak-checking, and publishing LocalLens on the Chrome Web Store.",
+  "github_homepage": "https://clawhub.ai/zack-dev-cm/openclaw-cws-publisher",
   "support_url": "https://github.com/zack-dev-cm/openclaw-cws-publisher/issues",
   "privacy_policy_url": "https://github.com/zack-dev-cm/openclaw-cws-publisher/blob/main/docs/privacy-policy.md",
   "test_instructions_url": "https://github.com/zack-dev-cm/openclaw-cws-publisher/blob/main/docs/test-instructions.md",
   "github_topics": [
     "chrome-extension",
+    "chrome-web-store",
     "openclaw",
     "browser-automation",
     "built-in-ai",
@@ -15,7 +18,14 @@
     "slug": "openclaw-cws-publisher",
     "name": "OpenClaw CWS Publisher",
     "version": "0.1.2",
-    "description": "OpenClaw skill for packaging and publishing Chrome extensions with leak checks and browser automation."
+    "description": "OpenClaw skill for packaging and publishing Chrome extensions with leak checks and browser automation.",
+    "tags": [
+      "chrome-extension",
+      "chrome-web-store",
+      "openclaw",
+      "browser-automation",
+      "privacy"
+    ]
   },
   "extension": {
     "name": "LocalLens: Private AI Summaries",
