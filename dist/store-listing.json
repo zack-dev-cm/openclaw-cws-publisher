@@ -1,0 +1,28 @@
+{
+  "name": "LocalLens: Private AI Summaries",
+  "short_description": "Private page summaries, rewrites, translations, and safe-share cleanup powered by Chrome built-in AI.",
+  "detailed_description": "LocalLens helps you move through dense pages faster without routing tab text to an external server.\n\nWhat it does:\n- Summarizes the current page into useful key points\n- Summarizes selected text for fast scanning\n- Simplifies dense writing into plainer language\n- Translates selected text inside the popup\n- Creates safe-share briefs by masking obvious sensitive strings before local AI processing\n\nWhy people use it:\n- No account or API key\n- Active-tab only workflow\n- Minimal permissions\n- Built for privacy-sensitive reading and collaboration workflows\n\nTechnical note:\nLocalLens targets Chrome 138+ with built-in AI support. If your browser has not downloaded the local model yet, Chrome may need a short warm-up download on first use.",
+  "category": "Productivity",
+  "single_purpose": "Summarize, simplify, translate, and safely rewrite text from the active tab with Chrome built-in AI while keeping the workflow local-first.",
+  "privacy": {
+    "stores_data": "No",
+    "sells_data": "No",
+    "shares_data": "No",
+    "uses_external_servers": "No",
+    "justification": "LocalLens reads text from the active tab only after the user clicks an action. The extension uses Chrome built-in AI locally and does not send captured text to a remote API."
+  },
+  "store_assets": {
+    "icon": "/Users/zack/Documents/GitHub/openclaw-cws-publisher/extension/icons/icon128.png",
+    "screenshot_1": "/Users/zack/Documents/GitHub/openclaw-cws-publisher/dist/store-assets/locallens-store-screenshot-1.png",
+    "promo_small": "/Users/zack/Documents/GitHub/openclaw-cws-publisher/dist/store-assets/locallens-promo-small.png"
+  },
+  "keywords": [
+    "ai summary",
+    "private summary",
+    "local ai",
+    "page summary",
+    "translate text",
+    "safe share",
+    "chrome built-in ai"
+  ]
+}
