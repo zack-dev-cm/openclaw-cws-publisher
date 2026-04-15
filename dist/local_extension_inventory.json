@@ -1,5 +1,20 @@
 [
   {
+    "name": "__MSG_extensionName__",
+    "version": "1.4.3",
+    "path": "/Users/zack/Documents/GitHub/github-repo-sum-chrome-plugin",
+    "description": "__MSG_extensionDescription__",
+    "permissions": [
+      "activeTab",
+      "storage",
+      "identity"
+    ],
+    "store_links": [
+      "https://chromewebstore.google.com/detail/github-repo-summarizer/ccikgbjalcbokaalidnfcjhhbhjoljfm"
+    ],
+    "published": true
+  },
+  {
     "name": "ChatGPT Scrollbar",
     "version": "1.2.1",
     "path": "/Users/zack/Documents/GitHub/chatgpt_scrollbar_chrome_extension",
@@ -12,19 +27,6 @@
       "https://chromewebstore.google.com/detail/chatgpt-codex-deepseek-gr/jnoonpeekddinkiecaonhocaflcgbhap"
     ],
     "published": true
-  },
-  {
-    "name": "__MSG_extensionName__",
-    "version": "1.4.3",
-    "path": "/Users/zack/Documents/GitHub/github-repo-sum-chrome-plugin",
-    "description": "__MSG_extensionDescription__",
-    "permissions": [
-      "activeTab",
-      "storage",
-      "identity"
-    ],
-    "store_links": [],
-    "published": false
   },
   {
     "name": "AI Super Agent",
@@ -55,8 +57,8 @@
   },
   {
     "name": "LocalLens: Private AI Summaries",
-    "version": "0.1.0",
-    "path": "/Users/zack/Documents/GitHub/openclaw-cws-publisher/extension",
+    "version": "0.1.1",
+    "path": "/Users/zack/Documents/GitHub/openclaw-cws-publisher",
     "description": "Summarize, simplify, translate, and safe-share page text locally with Chrome built-in AI.",
     "permissions": [
       "activeTab",
@@ -69,7 +71,21 @@
   {
     "name": "OpenClaw Browser Relay",
     "version": "0.1.0",
-    "path": "/Users/zack/Documents/GitHub/openclaw-upstream-20260319/assets/chrome-extension",
+    "path": "/Users/zack/Documents/GitHub/openclaw",
+    "description": "Attach OpenClaw to your existing Chrome tab via a local CDP relay server.",
+    "permissions": [
+      "debugger",
+      "tabs",
+      "activeTab",
+      "storage"
+    ],
+    "store_links": [],
+    "published": false
+  },
+  {
+    "name": "OpenClaw Browser Relay",
+    "version": "0.1.0",
+    "path": "/Users/zack/Documents/GitHub/openclaw-upstream-20260319",
     "description": "Attach OpenClaw to your existing Chrome tab via a local CDP relay server.",
     "permissions": [
       "debugger",
@@ -78,20 +94,6 @@
       "storage",
       "alarms",
       "webNavigation"
-    ],
-    "store_links": [],
-    "published": false
-  },
-  {
-    "name": "OpenClaw Browser Relay",
-    "version": "0.1.0",
-    "path": "/Users/zack/Documents/GitHub/openclaw/assets/chrome-extension",
-    "description": "Attach OpenClaw to your existing Chrome tab via a local CDP relay server.",
-    "permissions": [
-      "debugger",
-      "tabs",
-      "activeTab",
-      "storage"
     ],
     "store_links": [],
     "published": false

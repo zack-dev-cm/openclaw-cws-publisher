@@ -31,11 +31,11 @@ gh release create {release['tag']} --title "{release['title']}" --notes-file dis
 ## ClawHub
 
 ```bash
-clawhub publish ./skill/openclaw-cws-publisher \\
+(cd skill/openclaw-cws-publisher && clawhub publish "$PWD" \\
   --slug {clawhub['slug']} \\
   --name "{clawhub['name']}" \\
   --version {clawhub['version']} \\
-  --changelog "Initial public release."
+  --changelog "Initial public release.")
 ```
 """
     dump_text(args.out, text)

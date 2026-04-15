@@ -32,6 +32,7 @@ LocalLens is a privacy-first Chrome extension that summarizes, simplifies, trans
 - No external inference server required
 - Minimal extension permissions
 - Release includes leak-scan and packaging helpers for repeatable future updates
+- ClawHub package now ships with an explicit MIT license file in the published skill folder
 """
     dump_text(args.out, text)
     print(f"Wrote {args.out}")

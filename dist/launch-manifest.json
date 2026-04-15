@@ -11,12 +11,12 @@
   "clawhub": {
     "slug": "openclaw-cws-publisher",
     "name": "OpenClaw CWS Publisher",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "OpenClaw skill for packaging and publishing Chrome extensions with leak checks and browser automation."
   },
   "extension": {
     "name": "LocalLens: Private AI Summaries",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "summary": "Summarize, simplify, translate, and safe-share page text locally with Chrome built-in AI.",
     "category": "productivity",
     "chrome_min_version": "138"
@@ -27,7 +27,7 @@
     "project_link": "https://zack-dev-cm.github.io/projects/locallens-private-ai-summaries.md"
   },
   "release": {
-    "tag": "v0.1.0",
+    "tag": "v0.1.1",
     "title": "Initial public release: LocalLens: Private AI Summaries"
   }
 }

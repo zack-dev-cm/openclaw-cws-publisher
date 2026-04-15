@@ -16,6 +16,14 @@ CHROME_CANDIDATES = [
 ]
 
 
+def asset_is_fresh(output_path: Path, source_paths: list[Path]) -> bool:
+    if not output_path.exists() or output_path.stat().st_size <= 0:
+        return False
+    output_mtime = output_path.stat().st_mtime
+    latest_source_mtime = max(path.stat().st_mtime for path in source_paths if path.exists())
+    return output_mtime >= latest_source_mtime
+
+
 def detect_chrome() -> Path:
     for candidate in CHROME_CANDIDATES:
         if candidate.exists():
@@ -32,7 +40,8 @@ def render_page(
     profile_dir: Path,
 ) -> None:
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    if out_path.exists() and out_path.stat().st_size > 0:
+    source_paths = [html_path, html_path.parent / "marketing.css"]
+    if asset_is_fresh(out_path, source_paths):
         return
     command = [
         str(chrome),

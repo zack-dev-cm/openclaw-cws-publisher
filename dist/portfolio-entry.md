@@ -23,7 +23,7 @@ https://zack-dev-cm.github.io/projects/locallens-private-ai-summaries.md
 - GitHub CLI
 
 ## Benchmarks & Analytics
-- Extension version: 0.1.0
+- Extension version: 0.1.1
 - Chrome minimum version: 138
 - Runtime surfaces: 4 (extension, GitHub, ClawHub, portfolio)
 - Privacy posture: local-only text processing

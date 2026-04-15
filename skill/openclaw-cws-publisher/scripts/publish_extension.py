@@ -9,23 +9,23 @@ from openclaw_bridge import (
     arm_upload,
     click,
     dump_snapshot_text,
+    fill_fields,
     find_ref,
     open_url,
     snapshot,
     start_browser,
-    type_text,
     wait_for,
 )
 
 
-DASHBOARD_URL = "https://chrome.google.com/webstore/developer/dashboard"
+DASHBOARD_URL = "https://chromewebstore.google.com/u/0/developer/dashboard"
 
 
 def fill_text_field(profile: str, snap: str, label_phrases: list[str], value: str) -> bool:
     ref = find_ref(snap, label_phrases)
     if not ref:
         return False
-    type_text(profile, ref, value)
+    fill_fields(profile, [{"ref": ref, "type": "textbox", "value": value}])
     return True
 
 
@@ -36,6 +36,7 @@ def main() -> None:
     parser.add_argument("--listing", required=True, help="Listing copy JSON.")
     parser.add_argument("--zip-path", required=True, help="Extension ZIP path.")
     parser.add_argument("--browser-profile", required=True, help="OpenClaw browser profile.")
+    parser.add_argument("--dashboard-url", default=DASHBOARD_URL, help="Chrome Web Store dashboard URL override.")
     parser.add_argument("--dry-run", action="store_true", help="Stop after dashboard inspection.")
     args = parser.parse_args()
 
@@ -50,7 +51,7 @@ def main() -> None:
 
     try:
         start_browser(profile)
-        open_url(profile, DASHBOARD_URL)
+        open_url(profile, args.dashboard_url)
         wait_for(profile, ms=7000)
         first_snapshot = snapshot(profile)
         dump_snapshot_text(first_snapshot, snapshot_dir / "dashboard-initial.txt")

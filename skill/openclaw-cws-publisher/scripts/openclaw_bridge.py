@@ -60,6 +60,10 @@ def type_text(profile: str, ref: str, text: str) -> None:
     invoke(profile, "type", ref, text)
 
 
+def fill_fields(profile: str, fields: list[dict]) -> None:
+    invoke(profile, "fill", "--fields", json.dumps(fields))
+
+
 def find_ref(snapshot_text: str, phrases: list[str]) -> str | None:
     lines = snapshot_text.splitlines()
     for line in lines:
