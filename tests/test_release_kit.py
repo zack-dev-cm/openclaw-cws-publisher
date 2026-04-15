@@ -24,7 +24,8 @@ def test_scan_publish_surface_checks_tracked_dist_files(tmp_path: Path) -> None:
     readme.write_text("hello\n", encoding="utf-8")
     leaked = tmp_path / "dist" / "artifact.txt"
     leaked.parent.mkdir(parents=True)
-    leaked.write_text("path: /Users/zack/secret\n", encoding="utf-8")
+    fake_path = "/".join(["", "Users", "demo", "secret"])
+    leaked.write_text(f"path: {fake_path}\n", encoding="utf-8")
     subprocess.run(["git", "add", "README.md", "dist/artifact.txt"], cwd=tmp_path, check=True)
 
     findings = scan(tmp_path)
