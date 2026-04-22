@@ -15,6 +15,8 @@ When preparing a release from this repo:
 5. Keep GitHub topics and ClawHub tags aligned in the generated manifest.
 6. Do not commit generated `dist/` outputs or audit reports unless the user explicitly wants checked-in examples.
 7. Do not add arbitrary filesystem inventory or logged-in browser automation to the public skill surface.
+8. If a target repo has a reviewer gate, render it as a preflight step before any GitHub or ClawHub publish command.
+9. If a Chrome Web Store draft is already pending review, do not recommend cancel/resubmit unless a verified acceptance blocker exists.
 
 ## Required Metadata
 

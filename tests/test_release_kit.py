@@ -12,6 +12,7 @@ sys.path.insert(0, str(SCRIPT_DIR))
 
 from build_extension_zip import main as build_zip_main  # noqa: E402
 from generate_launch_manifest import build_launch_manifest  # noqa: E402
+from render_publish_commands import render_commands  # noqa: E402
 from scan_publish_surface import scan  # noqa: E402
 
 
@@ -59,6 +60,7 @@ def test_build_launch_manifest_is_generic(tmp_path: Path) -> None:
         clawhub_name="Sample Extension Skill",
         github_description=None,
         github_homepage=None,
+        public_site_base=None,
         topics=None,
         tags=None,
     )
@@ -67,6 +69,140 @@ def test_build_launch_manifest_is_generic(tmp_path: Path) -> None:
     assert payload["github_description"].startswith("Package, scan, and release Sample Extension")
     assert payload["clawhub"]["tags"] == ["chrome-extension", "chrome-web-store", "openclaw"]
     assert payload["support_url"].endswith("/issues")
+    assert payload["reviewer_gate"] == {"detected": False, "script": "", "pre_push_hook": ""}
+
+
+def test_build_launch_manifest_prefers_public_site_base_for_reviewer_links(tmp_path: Path) -> None:
+    repo_root = tmp_path / "sample-extension"
+    extension_dir = repo_root / "extension"
+    extension_dir.mkdir(parents=True)
+    (extension_dir / "manifest.json").write_text(
+        json.dumps(
+            {
+                "manifest_version": 3,
+                "name": "Sample Extension",
+                "version": "1.2.3",
+                "description": "Sample description",
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    payload = build_launch_manifest(
+        repo_root,
+        owner="example-owner",
+        extension_manifest=None,
+        clawhub_slug=None,
+        clawhub_name=None,
+        github_description=None,
+        github_homepage=None,
+        public_site_base="https://sample-extension.pages.dev",
+        topics=None,
+        tags=None,
+    )
+
+    assert payload["github_homepage"] == "https://github.com/example-owner/sample-extension"
+    assert payload["support_url"] == "https://sample-extension.pages.dev/support/"
+    assert payload["privacy_policy_url"] == "https://sample-extension.pages.dev/privacy/"
+    assert payload["test_instructions_url"] == "https://sample-extension.pages.dev/support/#reviewer-checklist"
+
+
+def test_build_launch_manifest_uses_public_site_base_env_for_reviewer_links(tmp_path: Path, monkeypatch) -> None:
+    repo_root = tmp_path / "sample-extension"
+    extension_dir = repo_root / "extension"
+    extension_dir.mkdir(parents=True)
+    (extension_dir / "manifest.json").write_text(
+        json.dumps(
+            {
+                "manifest_version": 3,
+                "name": "Sample Extension",
+                "version": "1.2.3",
+                "description": "Sample description",
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("CWS_PUBLIC_SITE_BASE", "https://sample-extension.workers.dev")
+
+    payload = build_launch_manifest(
+        repo_root,
+        owner="example-owner",
+        extension_manifest=None,
+        clawhub_slug=None,
+        clawhub_name=None,
+        github_description=None,
+        github_homepage=None,
+        public_site_base=None,
+        topics=None,
+        tags=None,
+    )
+
+    assert payload["github_homepage"] == "https://github.com/example-owner/sample-extension"
+    assert payload["support_url"] == "https://sample-extension.workers.dev/support/"
+    assert payload["privacy_policy_url"] == "https://sample-extension.workers.dev/privacy/"
+    assert payload["test_instructions_url"] == "https://sample-extension.workers.dev/support/#reviewer-checklist"
+
+
+def test_build_launch_manifest_detects_reviewer_gate(tmp_path: Path) -> None:
+    repo_root = tmp_path / "sample-extension"
+    extension_dir = repo_root / "extension"
+    extension_dir.mkdir(parents=True)
+    (repo_root / "scripts").mkdir()
+    (repo_root / ".githooks").mkdir()
+    (repo_root / "scripts" / "reviewer_gate.py").write_text("print('gate')\n", encoding="utf-8")
+    (repo_root / ".githooks" / "pre-push").write_text("#!/bin/sh\n", encoding="utf-8")
+    (extension_dir / "manifest.json").write_text(
+        json.dumps(
+            {
+                "manifest_version": 3,
+                "name": "Sample Extension",
+                "version": "1.2.3",
+                "description": "Sample description",
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    payload = build_launch_manifest(
+        repo_root,
+        owner="example-owner",
+        extension_manifest=None,
+        clawhub_slug=None,
+        clawhub_name=None,
+        github_description=None,
+        github_homepage=None,
+        public_site_base=None,
+        topics=None,
+        tags=None,
+    )
+
+    assert payload["reviewer_gate"] == {
+        "detected": True,
+        "script": "scripts/reviewer_gate.py",
+        "pre_push_hook": ".githooks/pre-push",
+    }
+
+
+def test_render_publish_commands_includes_reviewer_gate_preflight() -> None:
+    output = render_commands(
+        {
+            "repo_owner": "example-owner",
+            "repo_name": "sample-extension",
+            "github_description": "Sample extension",
+            "github_homepage": "https://example.com",
+            "github_topics": ["chrome-extension"],
+            "release": {"tag": "v1.2.3", "title": "Release Sample Extension v1.2.3"},
+            "reviewer_gate": {
+                "detected": True,
+                "script": "scripts/reviewer_gate.py",
+                "pre_push_hook": ".githooks/pre-push",
+            },
+        }
+    )
+
+    assert "## Reviewer Gate" in output
+    assert "python3 scripts/reviewer_gate.py --repo-root . --skip-codex" in output
+    assert "git config core.hooksPath .githooks" in output
 
 
 def test_build_extension_zip_writes_relative_archive(tmp_path: Path, monkeypatch) -> None:

@@ -13,6 +13,7 @@ The LocalLens extension was split out of this repo. Product assets, Chrome Web S
 - zip a target `extension/` directory for Chrome Web Store upload
 - scan tracked files for absolute paths, localhost URLs, websocket URLs, and token-shaped strings
 - derive GitHub and optional ClawHub release metadata from a target extension manifest
+- detect repo-local reviewer gates and render them as preflight checks
 - render reproducible `gh repo edit`, `gh release create`, and `clawhub publish --tags ...` commands
 
 ## What This Repo Does Not Do
@@ -50,6 +51,7 @@ python3 skill/openclaw-cws-publisher/scripts/scan_publish_surface.py \
 python3 skill/openclaw-cws-publisher/scripts/generate_launch_manifest.py \
   --repo-root /path/to/extension-repo \
   --owner your-github-owner \
+  --public-site-base https://your-extension.pages.dev \
   --clawhub-slug your-extension-slug \
   --clawhub-name "Your Extension Skill" \
   --out /path/to/extension-repo/dist/launch-manifest.json
@@ -70,13 +72,17 @@ The target repo should provide:
 Optional:
 
 - a ClawHub skill slug and name if the target repo also publishes a public skill
+- a dedicated public support/privacy site, ideally on Cloudflare Workers or Cloudflare Pages; pass `--public-site-base` or export `CWS_PUBLIC_SITE_BASE`
+- a repo-local reviewer gate such as `scripts/reviewer_gate.py` and `.githooks/pre-push` when the extension needs policy/runtime review before publish
 - extra GitHub topics and ClawHub tags through the manifest generator flags
 
 ## Security Posture
 
 - the leak scan now operates on tracked files from `git ls-files`
+- release readiness should be based on the ZIP intended for upload, not source-only assumptions
 - generated artifacts are not meant to be committed by default
 - browser automation is intentionally kept out of the public skill surface
+- pending Chrome Web Store drafts should not be canceled for nonblocking hardening; queue those changes for the next patch version
 
 ## License
 
