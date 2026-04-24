@@ -1,7 +1,7 @@
 ---
 name: openclaw-cws-publisher
 description: OpenClaw CWS Publisher is a public ClawHub Chrome Web Store publisher skill. Use it when the user says "chrome web store publisher", "extension release publisher", "CWS publisher", or wants to package a Chrome extension, scan tracked files for public-surface leaks, and render GitHub or ClawHub release metadata with explicit tags.
-version: 0.2.2
+version: 0.2.3
 homepage: https://github.com/zack-dev-cm/openclaw-cws-publisher
 license: MIT
 user-invocable: true
