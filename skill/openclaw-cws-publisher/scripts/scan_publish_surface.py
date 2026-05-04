@@ -15,6 +15,14 @@ PATTERNS = {
     "google-client-id": re.compile(r"\b\d{10,}-[a-z0-9]{16,}\.apps\.googleusercontent\.com\b"),
 }
 
+REDACTION_LABELS = {
+    "absolute-path": "<redacted:absolute-path>",
+    "localhost-url": "<redacted:local-url>",
+    "websocket-url": "<redacted:websocket-url>",
+    "token-shaped": "<redacted:token>",
+    "google-client-id": "<redacted:google-client-id>",
+}
+
 TEXT_EXTENSIONS = {
     ".cjs",
     ".css",
@@ -36,7 +44,11 @@ TEXT_EXTENSIONS = {
 
 
 def tracked_files(root: Path) -> list[Path]:
-    result = run(["git", "ls-files", "-z"], cwd=root, timeout=15)
+    result = run(
+        ["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard"],
+        cwd=root,
+        timeout=15,
+    )
     if result.returncode != 0:
         return [path for path in root.rglob("*") if path.is_file()]
     return [root / path for path in result.stdout.split("\0") if path]
@@ -65,10 +77,16 @@ def scan(root: Path) -> list[dict]:
                         "kind": kind,
                         "path": str(path.relative_to(root)),
                         "line": line_number,
-                        "excerpt": line.strip()[:220],
+                        "excerpt": redacted_excerpt(kind, line),
                     }
                 )
     return findings
+
+
+def redacted_excerpt(kind: str, line: str) -> str:
+    pattern = PATTERNS[kind]
+    label = REDACTION_LABELS[kind]
+    return pattern.sub(label, line.strip())[:220]
 
 
 def render_markdown(findings: list[dict]) -> str:

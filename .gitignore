@@ -6,3 +6,6 @@ dist/
 docs/local_extension_inventory.md
 docs/publish_surface.md
 docs/publish-surface-scan.md
+docs/publish-surface.md
+docs/chrome-release.md
+.local-unreadable-scripts/
